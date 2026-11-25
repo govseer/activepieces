@@ -639,6 +639,9 @@
       "@activepieces/piece-gorgias": [
         "packages/pieces/community/gorgias/src/index.ts"
       ],
+      "@activepieces/piece-govseer": [
+        "packages/pieces/community/govseer/src/index.ts"
+      ],
       "@activepieces/piece-granola": [
         "packages/pieces/community/granola/src/index.ts"
       ],
