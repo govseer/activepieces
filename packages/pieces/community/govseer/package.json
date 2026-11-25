@@ -1,6 +1,24 @@
 {
-  "name": "@activepieces/piece-govseer",
+  "name": "@govseer/piece-govseer",
   "version": "0.0.1",
+  "description": "Govseer for Activepieces: EU CLP labels, marketplace and shipping fields, and OSHA HCS and WHMIS checks from safety data sheets.",
+  "license": "MIT",
+  "homepage": "https://govseer.com/docs/api",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/govseer/activepieces.git",
+    "directory": "packages/pieces/community/govseer"
+  },
+  "keywords": [
+    "activepieces",
+    "piece",
+    "govseer",
+    "safety data sheet",
+    "clp",
+    "ghs",
+    "osha",
+    "whmis"
+  ],
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
   "scripts": {

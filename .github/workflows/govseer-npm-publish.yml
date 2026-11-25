@@ -1,0 +1,47 @@
+name: Publish Govseer piece to npm
+
+on:
+  push:
+    branches: [govseer-npm]
+    paths: ['packages/pieces/community/govseer/package.json']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    if: github.repository == 'govseer/activepieces'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PIECE: packages/pieces/community/govseer
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - run: npm install -g npm@11
+      - run: bun install
+      - run: |
+          npx turbo run build --filter=@govseer/piece-govseer
+          npx turbo run lint --filter=@govseer/piece-govseer
+      - name: Bundle
+        run: |
+          npx ts-node -r tsconfig-paths/register --project tools/tsconfig.tools.json -e "require('./packages/cli/src/lib/utils/prepare-piece-utils').preparePieceDistForPublish('$GITHUB_WORKSPACE/$PIECE').catch((e) => { console.error(e); process.exit(1) })"
+          cp $PIECE/README.md $PIECE/dist/
+          cat $PIECE/dist/package.json
+          ls -la $PIECE/dist
+      - name: Publish
+        working-directory: ${{ env.PIECE }}/dist
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then unset NODE_AUTH_TOKEN; fi
+          if npm view "$(node -p "require('./package.json').name")@$(node -p "require('./package.json').version")" version 2>/dev/null; then echo "already published"; exit 0; fi
+          npm publish --access public --provenance
